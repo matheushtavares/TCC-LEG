@@ -1,0 +1,258 @@
+\documentclass[oneside,a4paper,11pt]{report}
+\usepackage[english,brazilian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{cmap}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\microtypesetup{activate={true,nocompatibility}}
+\microtypesetup{factor=1100, stretch=10, shrink=10}
+\microtypesetup{tracking=true, spacing=true, kerning=true}
+\microtypesetup{final, babel}
+\usepackage{amsmath,amssymb,amsfonts,textcomp}
+\usepackage[margin=3cm]{geometry}
+\setlength{\marginparwidth}{10pt}
+\usepackage{setspace}
+\setlength{\fboxsep}{1em}
+\geometry{hcentering}
+\usepackage[]{graphicx}
+\usepackage{color}
+\usepackage[usenames,dvipsnames,svgnames]{xcolor}
+\usepackage{subfig}
+\usepackage{caption}
+\usepackage{multicol}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{lscape}
+\usepackage[notintoc,portuguese]{nomencl}
+\usepackage[authoryear]{natbib}
+\usepackage[nottoc,notlof,notlot]{tocbibind}
+\usepackage{icomma}
+\usepackage[tight]{units}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancypagestyle{plain}{\fancyhf{}}
+\fancyhead{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\headheight 13.6pt
+
+\newcommand{\nomedoaluno}{Matheus Henrique Tavares}
+\newcommand{\titulo}{Comparação entre o Método dos Momentos-L e métodos estatíscos clássicos de ajuste de distribuições a dados hidrológicos}
+
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=black, citecolor=black, filecolor=black, urlcolor=black,
+            pdfauthor={\nomedoaluno},
+            pdftitle={\titulo},
+            pdfsubject={Assunto do Projeto},
+            pdfkeywords={palavra-chave, palavra-chave, palavra-chave},
+            pdfproducer={LaTeX},
+            pdfcreator={pdfTeX}}
+
+\usepackage{indentfirst}
+\usepackage{titlesec}
+\titleformat{\chapter}{\normalfont\huge}{\thechapter.}{20pt}{}
+\usepackage[justification=centering]{caption}
+\rfoot{\thepage}
+
+\begin{document}
+\pagestyle{empty}
+\begin{titlepage}
+\begin{center}
+{\large UNIVERSIDADE FEDERAL DO PARANÁ}
+\par
+\vspace{60pt}
+{\LARGE \nomedoaluno}
+\par
+\vspace{200pt}
+{\Huge \titulo}
+\par
+\vfill
+\textbf{{\large Curitiba}\\
+{\large \the\year}}
+\end{center}
+\end{titlepage}
+\cleardoublepage
+\pagestyle{fancy}
+\pagenumbering{roman}
+\thispagestyle{empty}
+
+\begin{center}
+{\LARGE \nomedoaluno}
+\par
+\vspace{200pt}
+{\Huge \titulo}
+\end{center}
+\par
+\vspace{90pt}
+\hspace*{175pt}\parbox{7.6cm}{{\large Trabalho apresentado como requisito parcial à obtenção do grau de bacharel em Engenharia Ambiental, Setor de Tecnologia da Universidade Federal do Paraná.}}
+
+\par
+\vspace{1em}
+\hspace*{175pt}\parbox{7.6cm}{{\large Orientador: Paulo Justiniano Ribeiro Jr.}}
+
+\par
+\vspace{1em}
+\hspace*{175pt}\parbox{7.6cm}{{\large Co-orientador: Maurício Felga Gobbi}}
+
+\par
+\vfill
+\begin{center}
+\textbf{{\large Curitiba}\\
+{\large \the\year}}
+\end{center}
+
+\newpage
+\microtypesetup{protrusion=false}
+
+\listoffigures
+
+\tableofcontents
+
+\microtypesetup{protrusion=true}
+\pagestyle{fancy}
+\pagenumbering{arabic}
+\setlength{\parindent}{1.25cm}
+
+\chapter{Introdução}\label{intro}
+O ajuste de distribuições estatísticas a dados é, oficialmente, datado de 1894, quando Karl Pearson usou um método, batizado de Método dos Momentos, para ajustar uma mistura de duas distribuições normais a dados de razão de tamanho corporal de caranguejos \citep{pearson94}. Hoje em dia, são inúmeras as áreas em que são feitos ajustes de curvas, como na biologia, na economia e na meteorologia, assim como o número de métodos empregados para tal.\par
+Na hidrologia, isto também se aplica. O ajuste de distribuições de probabilidade a dados hidrológicos é uma das formas mais comuns de resumir uma série de dados (como a vazão de um rio) em uma função \citep{Chow}. Tendo uma série histórica de dados de uma região, seja ela, por exemplo, de mínimas de vazão anuais ou de máximas de precipitação diária mensais, é possível se ajustar um curva que represente estes dados, de forma que análises estatísticas e previsões possam ser feitas para esta região; isto é útil, por exemplo, na previsão de eventos extremos, como secas e enchentes, e de vazões de projeto para projetos de estruturas vulneráveis a enchentes, como pontes e galerias de água pluvial \citep{serrano}.\par
+Para um ajuste eficaz de distribuição, dois itens são necessários: dados de qualidade e um método consistente com a análise. No caso dos dados, eles devem ser representativos do comportamento hidrológico e meteorológico da área de estudo. Logo, a série histórica a ser utilizada deve conter um intervalo mínimo de dados contínuo, de forma a conter os padrões de variação intersazonal e interanual da região; em geral, este número mínimo é de 20 anos \citep{Chow}. A respeito do método ou métodos empregados, estes devem ter uma eficácia mínima que os ajustes feitos sejam consistentes com a amostra de dados disponíveis, para assegurar que a curva possa representar o comportamento hidrológico da região estudada.\par
+Embora, em geral, a consistência dos dados hidrológicos seja estudada e respeitada no ajuste de distribuições, algumas vezes o método não é. Na literatura, há dois métodos já consolidados e que geralmente são aplicados para estes casos: o Método dos Momentos e o Método da Máxima Verossimilhança. O que ocorre é que muitas vezes estes métodos são aplicados sem critério ou sem alguma forma de avaliação da performance deles na sumarização do conjunto de dados disponível. \citet{cousineau}, por exemplo, empregou alguns métodos, entre eles o Método dos Momentos e o Método da Máxima Verossimilhança, para amostras pequenas usando simulações de Monte Carlo, e concluiu que o Método da Máxima Verossimilhança foi bastante ineficiente e que deveria ser até evitado, com erros de estimação até duas vezes pior que os demais métodos.\par
+O Método dos Momentos-L foi recentemente proposto por \citet{hosking90} visando substituir estes métodos clássicos em análises de dados hidrológicos, devido a estudos como o de Cousineau que mostram que eles não são eficazes em situações comuns a este tipo de dados: amostras pequenas e presença de \textit{outliers} (ou valores atípicos). O Método dos Momentos-L foi desenvolvido a partir do trabalho de \citet{greenwood}, e tem se tornado popular na hidrologia devido a diversos trabalhos na área \citep{delicado, goda} que mostram que ele é bastante eficiente nesse contexto.\par
+Sendo assim, o que este trabalho se propõe a fazer é um estudo comparativo entre estes métodos de ajustes de distribuição a dados hidrológicos.\par
+
+\chapter{Objetivos}\label{obj}
+	\section{Objetivo Geral}\label{obj:og}
+	Comparar o Método dos Momentos-L, mais recentemente proposto na literatura, com os métodos já estabelecidos da Máxima Verossimilhança e o Métodos dos Momentos no ajuste de distribuições de probabilidade, com ênfase em dados de vazão máxima e mínima e de precipitação máxima e mínima.
+	\section{Objetivos específicos}\label{obj:oe}
+	\begin{enumerate}
+  	\item{Revisar os fundamentos dos diferentes métodos empregados neste trabalho e sua implementação computacional.}\label{obj1}
+  	\item{Avaliar a performance do Método dos momentos-L em comparação com a dos Métodos dos Momentos e da Máxima Verossimilhança na obtenção de parâmetros de distribuições de probabilidade comumente usadas na hidrologia em simulações com diferentes cenários.}\label{obj2}
+  	\item{Comparar a performance dos três métodos no ajuste de curvas a dados hidrológicos reais, de séries históricas de estações fluviométricas e pluviométricas.}\label{obj3}
+	\end{enumerate}
+
+\chapter{Revisão Bibliográfica}\label{rev}
+O intuito desta revisão é dar as bases dos métodos paramétricos que serão utilizados neste trabalho: o Método dos Momentos, o Método da Máxima Verossimilhança e o Método dos Momentos-L. Também serão revisados na literatura alguns trabalhos que fizeram estudos comparativos sobre a performance destes métodos em situações específicas.\par
+Para a introdução dos métodos, primeiro fazem-se necessárias algumas definições. \(X\) é uma variável aleatória, com função de densidade \(f(x)\) e função distribuição cumulativa \(F(x)\). O valor esperado de \(X\) é definido como:\par
+\begin{equation}
+E[X] = \mu = \int_{-\infty}^{\infty} \! x \, \mathrm{d}F(x) = \int_{-\infty}^{\infty} \! x f(x) \, \mathrm{d}x
+\end{equation}\par
+Isto definido, introduz-se os métodos.\par
+	\section{Método dos Momentos}\label{rev:mom}
+	O Método dos Momentos foi criado em 1894, quando Pearson ``importou'' os momentos da física à estatística para estimar os coeficientes de duas distribuições normais ajustadas a dados de razão entre a largura da fronte e o comprimento do corpo de 1000 caranguejos \citep{pearson94}. Desde então, tem sido um dos métodos mais utilizados para ajuste de curvas a dados em várias áreas do conhecimento.\par
+	Os momentos de uma população são os valores esperados de potências da variável aleatória em questão, e são definidos como:
+	\begin{equation}
+	\mu_{r} = E[X^{r}] = \int_{-\infty}^{\infty} \! x^{r} f(x) \, \mathrm{d}x
+	\end{equation}
+	onde \(\mu_{r}\) é o r-ésimo momento da população.\par
+	O primeiro momento é a média da população. Os momentos centrados são momentos em torno da média, e dados por:
+	\begin{equation}
+	\mu_{r}^{'}= E[X - E(X)]^{r} = \int_{-\infty}^{\infty} \! (x - \mu)^{r} f(x) \, \mathrm{d}x
+	\end{equation}\par
+	Muito da forma de distribuições de probabilidade é explicado por medidas que são definidas em torno dos momentos. A variância, \(\sigma^2\), é definida como segundo momento centrado, e o desvio padrão é a raiz quadrada da variância. O coeficiente de variação CV, uma medida de dispersão da distribuição em torno da média, é dado por:\par
+	\begin{equation}
+	CV = \frac {\sigma} {\mu}
+	\end{equation}\par
+	A obliquidade \(\gamma\), uma medida de assimetria, e a curtose \(\kappa\), uma medida de dispersão da distribuição, são definidas como razões entre momentos:\par
+	\begin{equation}
+	\gamma = \frac {\mu_{3}} {\mu_{2}^{3/2}}
+	\end{equation}\par
+	\begin{equation}
+	\kappa = \frac {\mu_{4}} {\mu_{2}^{2}}
+	\end{equation}\par
+	Os momentos de uma amostra são dados de forma análoga por:
+	\begin{equation}
+	m_{r} = \frac {1} {n} \sum\limits_{i=1}^n (x_{i} - \bar{x})^{r}
+	\end{equation}
+	onde \(m_{r}\) é o r-ésimo momento da amostra.\par
+	O Método dos Momentos consiste em se estimar os momentos da população pelos momentos amostrais, isto é, igualar os momentos amostrais dos dados aos momentos da distribuição escolhida para o ajuste, e estimar assim os parâmetros da distribuição. Ele é largamente usado pela facilidade de implementação, em especial para distribuições com apenas dois parâmetros. Porém, os momentos dão mais peso a grandes diferenças, devido a sua definição (exponenciação dos \(x_{i}\)), e por isso tende a não ter bom desempenho em amostras com muitos \textit{outliers} \citep{regional}.
+
+	\section{Método da Máxima Verossimilhança}\label{rev:mmv}
+	O Método da Máxima Verossimilhança foi oficialmente estruturado, e posteriormente popularizado, por R. A Fisher entre 1912 e 1922 (apesar dele já ter sido aplicado anteriormente, mas sob outros nomes) \citep{hald, fisher12, fisher21}. Este método foi proposto depois de Fisher questionar o Método dos Momentos de Pearson, que o considerava um estimador ineficaz \citep{fisher37}.\par
+	O método consiste em, dada uma amostra, se obter os parâmetros da distribuição escolhida para o ajuste que têm maior probabilidade de ser a distribuição que gerou a amostra. Em termos matemáticos, os parâmetros estimados são os que maximizam a função de verossimilhança, definida como:\par
+	\begin{equation}
+	\mathcal{L} (x_{1}, x_{2}, ..., x_{n}, \theta) = \prod\limits_{i=1}^n f(x_{i}, \theta)
+	\end{equation}\par
+	Onde \(\theta\) é o parâmetro ou conjunto de parâmetros a serem estimados. Como a função deve ser maximizada, o log da função de verossimilhança, chamada de função de log-verossimilhança, também pode ser maximizado, facilitando a álgebra, já que o logaritmo transforma o produtório em um somatório.  A função de log-verossimilhança é dada, então, por:\par
+	\begin{equation}
+	\ell (x_{1}, x_{2}, ..., x_{n}, \theta) = \sum\limits_{i=1}^n \, \log \, f(x_{i}, \theta)
+	\end{equation}\par
+	Para a maximização da função, pode ser empregada análise matemática (derivadas parciais iguais a zero) ou computacional, empregando métodos iterativos.\par
+	O Método da Máxima Verossimilhança é, em geral, mais eficaz na estimação dos parâmetros, devido a sua definição. Contudo, para amostras pequenas, este método nem sempre estima os parâmetros satisfatoriamente \citep{delicado}. \citet{oztekin}, por exemplo, analizou dados de vazão máxima de 50 rios na Turquia, estimando os parâmetros da distribuição generalizada de Pareto por 5 métodos diferentes, e concluiu que o método dos momentos, em geral, foi superior.\par
+
+	\section{Método dos Momentos-L}\label{rev:mlm}
+	O Método dos Momentos-L foi proposto por J. R. M. Hosking em 1990 como uma alternativa a estes dois métodos descritos \citep{hosking90}. Ele foi desenvolvido a partir da idéia de \textit{``momentos ponderados por probabilidade''} (tradução livre de \textit{``probability weighted moments''}) de \citet{greenwood}. Esses momentos são definidos como:\par
+	\begin{equation}
+	M_{p,r,s} = E\{X^{p}F(X)^{r}[1 - F(X)]^{s}\}
+	\end{equation}\par
+	Chamando de \(\alpha_{r} = M_{1,0,r}\), de \(\beta_{r} = M_{1,r,0}\), e fazendo \(u = F(x)\), temos que:
+	\begin{equation}
+	\alpha_{r} = \int_{0}^{1} \! x(u)(1 - u)^{r} \, \mathrm{d}u
+	\end{equation}
+	\begin{equation}
+	\beta_{r} = \int_{0}^{1} \! x(u)u^{r} \, \mathrm{d}u
+	\end{equation}\par
+	Os momentos-L são, então, definidos como combinações lineares destas integrais de \(x(u)\), ponderados pelos \textit{``polinômios modificados de Legendre''} (tradução livre de \textit{``shifted Legendre polynomials''}), definidos como:\par
+	\begin{equation}
+	P^{*}_{r}(u) = \sum\limits_{k=1}^r p^{*}_{r,k}u^{k}
+	\end{equation}\par
+	onde
+	\begin{equation}
+	p^{*}_{r,k} = (-1)^{r - k} \binom {r} {k} \binom {r + k} {k} = \frac {(-1)^{r-k}(r + k)!} {(k!^{2}) (r - k)!}
+	\end{equation}\par
+	Em termos dos momentos ponderados por probabilidade, os momentos-L são dados por:
+	\begin{equation}
+	\begin{split}
+	\lambda_{1} & = \alpha_{0} = \beta_{0}\\
+	\lambda_{2} & = \alpha_{0}  - 2\alpha_{1} = 2\beta_{1} - \beta_{0}\\
+	\lambda_{3} & = \alpha_{0}  - 6\alpha_{1} + 6\alpha_{2} = 2\beta_{2} - 6\beta_{1} + \beta_{0}\\
+	\lambda_{4} & = \alpha_{0}  - 12\alpha_{1} + 30\alpha_{2} - 20\alpha_{3} = 20\beta_{3} - 30\beta_{2} + 12\beta_{1} - \beta_{0}\\
+	\end{split}
+	\end{equation}
+	e, em geral:
+	\begin{equation}
+	\lambda_{r+1} = (-1)^{r} \sum\limits_{k=0}^r p^{*}_{r,k}\alpha_{k} = \sum\limits_{k=0}^r P^{*}_{r,k}\beta_{k}
+	\end{equation}
+	onde \(\lambda_{r+1}\) é o \((r+1)\)-ésimo momento-L.\par
+	Assim, o r-ésimo momento-L da população é definido em termos de \(x(u)\) como:\par
+	\begin{equation}
+	\lambda_{r} = \int_{0}^{1} \! x(u) P^{*}_{r -1}(u) \, \mathrm{d}u.
+	\end{equation}\par
+	Os momentos-L amostrais são calculados de forma análoga. Sendo \(n\) o tamanho da amostra, e \(x_{1:n} \leq x_{2:n} \leq ... \leq x_{n:n}\) a amostra ordenada de forma crescente, onde \(x_{r:n}\) é o r-ésimo menor valor da amostra, os momentos-L amostrais são definidos como:
+	\begin{equation}
+	\begin{split}
+	\mathit{l}_{1} & = b_{0} \\
+	\mathit{l}_{2} & = 2b_{1} - b_{0} \\
+	\mathit{l}_{3} & = 2b_{2} - 6b_{1} + b_{0} \\
+	\mathit{l}_{4} & = 20b_{3} - 30b_{2} + 12b_{1} - b_{0} \\
+	\end{split}
+	\end{equation}
+	onde (de \citealp{landwehr})
+	\begin{equation}
+	b_{r} = \frac {1} {n} \sum\limits_{j=r+1}^n \frac {(j - 1)(j - 2) ... (j - r)} {(n - 1) (n - 2) ... (n - r)} \, x_{j:n}
+	\end{equation}
+	e, em geral 
+	\begin{equation}
+	\mathit{l}_{r+1} = \sum\limits_{k=0}^r p^{*}_{r,k}b_{k}
+	\end{equation}\par
+	O Método dos Momentos-L funciona de forma similar ao Método do Momentos: usando o momento amostral como um estimador do momento da população, para se obter os parâmetros da função ajustada à amostra. E, assim como os momentos, os momentos-L definem quantidades que sumarizam a distribuição de probabilidade: \(\lambda_{1}\) é a média da distribuição, \(\lambda_{2}\) é a escala, \(\tau\) é o CV-L, \(\tau_{3}\) é a obliquidade-L, e \(\tau_{4}\) é a curtose-L \citep{hosking89}, onde:
+	\begin{equation}
+	\tau = \frac {\lambda_{2}} {\lambda_{1}}
+	\end{equation}
+	e
+	\begin{equation}
+	\tau_{r} = \frac {\lambda_{r}} {\lambda_{2}}
+	\end{equation}\par
+	Comparando com os momentos convencionais, percebe-se que os momentos-L dão menos \textit{``peso''} aos \textit{outliers} da amostra, devido à exponenciação de \(1 - u\) em vez de \(x(u)\) \citep{regional}.\par
+
+\chapter{Metodologia}\label{meto}
+Para a simulação de dados de distribuições de probabilidade e aplicação dos métodos, será utilizado o software \textit{R} 3.2.0 \citep{RTeam}. Com o pacote \textit{FAdist} \citep{fadist} serão incluídas algumas distribuições comuns em hidrologia que não existem no \textit{Rbase}. Para a implementação do Método dos Momentos, será utilizado o pacote \textit{moments} \citep{moments}; para a implementação do Método da Máxima Verossimilhança, serão utilizados os pacotes \textit{MASS} \citep{MASS} e \textit{fitdistrplus} \citep{fdp}; e para o método dos momentos-L, o pacote \textit{lmomco} \citep{lmomco}. \par
+Inicialmente serão simulados alguns dados de distribuições de probabilidade, e os métodos serão aplicados para se obter os parâmetros destas amostras aleatórias de distribuições. Então, será avaliada a performance dos mesmos em cada caso; em especial, sob algumas condições comuns em dados hidrológicos, como amostras pequenas (n < 30) ou com presença de \textit{outliers}.\par
+Num segundo momento, serão utilizados dados reais de séries históricas de máximas e mínimas de vazão e precipitação, que poderão ser mensais ou anuais. Os dados serão da base de dados da Agência Nacional de Águas (ANA), disponível na plataforma \textit{HidroWeb} \citep{Hidroweb}.\par
+
+\bibliographystyle{apalike}
+\bibliography{mestre}
+\end{document}
